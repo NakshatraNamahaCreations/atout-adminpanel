@@ -18,7 +18,7 @@ export default function Sidebar() {
   const location = useLocation(); // Get the current route path
 
   const routes = [
-    { name: "Dashboard", path: "/", icon: <FaTachometerAlt /> },
+    { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
     { name: "Products", path: "/products", icon: <FaBoxOpen /> },
     { name: "Categories", path: "/categories", icon: <FaList /> },
     { name: "Inventory", path: "/inventory", icon: <FaWarehouse /> },

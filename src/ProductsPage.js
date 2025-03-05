@@ -39,12 +39,12 @@ const ProductsPage = ({ existingProductData }) => {
 
   
   useEffect(() => {
-    setFilteredProducts(products); // Initialize filtered list
-  }, [products]); // Runs when products change
+    setFilteredProducts(products); 
+  }, [products]); 
   
   const handleSearch = (query) => {
     setSearchTerm(query);
-    setCurrentPage(1); // ✅ Reset to first page when searching
+    setCurrentPage(1); 
   };
   
   
@@ -56,21 +56,21 @@ const ProductsPage = ({ existingProductData }) => {
     )
   : products;
 
-// Calculate total pages based on filtered data
+
 const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-// Ensure pagination is applied to the filtered results
+
 const indexOfLastItem = currentPage * itemsPerPage;
 const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  // console.log("selectedProduct", selectedProduct);
+
 
   const fetchProducts = async () => {
     try {
       const response = await axios.get("https://api.atoutfashion.com/api/products");
       const productsData = response.data.data || [];
-      // console.log(setProducts, "setProducts");
+      
       setProducts(productsData);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -81,7 +81,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
     fetchProducts();
   }, []);
 
-  // console.log(setProducts, "setProducts");
+
 
   const [imagePreviews, setImagePreviews] = useState([
     null,
@@ -94,11 +94,11 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
     const file = e.target.files[0];
     if (file) {
       const updatedPreviews = [...imagePreviews];
-      updatedPreviews[index] = URL.createObjectURL(file); // ✅ Use createObjectURL only for new files
+      updatedPreviews[index] = URL.createObjectURL(file); 
       setImagePreviews(updatedPreviews);
   
       const updatedImages = [...newProduct.images];
-      updatedImages[index] = file; // ✅ Replace only with the new file
+      updatedImages[index] = file; 
       setNewProduct({ ...newProduct, images: updatedImages });
     }
   };
@@ -107,9 +107,9 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const checkIfSKUExists = async (sku) => {
     try {
       const response = await axios.get(`https://api.atoutfashion.com/api/products/check-sku?sku=${sku}`);
-      return response.data.exists; // true if SKU exists, false otherwise
+      return response.data.exists; 
     } catch (error) {
-      console.error("❌ Error checking SKU:", error);
+      console.error("Error checking SKU:", error);
       return false;
     }
   };
@@ -153,7 +153,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   
       console.log("Product added:", response.data);
       
-      // ✅ Reload the page after successful addition
+     
       window.location.reload();
   
     } catch (error) {
@@ -170,9 +170,9 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
         return;
       }
 
-      console.log("Updating product with ID:", newProduct._id); // Log the product ID
+      console.log("Updating product with ID:", newProduct._id); 
 
-      // Create FormData to handle both text and files
+    
       const formData = new FormData();
       formData.append("name", newProduct.name);
       formData.append("category", newProduct.category);
@@ -186,10 +186,10 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
       formData.append("details", newProduct.details);
       formData.append("stock", newProduct.stock);
 
-      // Add new images to the FormData
+   
       if (newProduct.images && newProduct.images.length > 0) {
         newProduct.images.forEach((file) => {
-          formData.append("images", file); // File inputs are appended like this
+          formData.append("images", file); 
         });
       }
 
@@ -197,15 +197,15 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
         `https://api.atoutfashion.com/api/products/${newProduct._id}`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" }, // Necessary for file uploads
+          headers: { "Content-Type": "multipart/form-data" }, 
         }
       );
 
       if (response.data.success) {
         alert("Product updated successfully!");
-        setIsAddingProduct(false); // Close the form after submission
-        setIsEditingProduct(false); // Reset edit mode
-        fetchProducts(); // Refresh the product list
+        setIsAddingProduct(false); 
+        setIsEditingProduct(false); 
+        fetchProducts(); 
       } else {
         alert(response.data.message || "Failed to update product.");
       }
@@ -218,18 +218,18 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const handleEditProduct = (productId) => {
     const productToEdit = products.find((product) => product._id === productId);
   
-    // Ensure images are properly mapped: URLs remain, new files will be handled later
+
     const updatedImagePreviews = productToEdit.images.map((image) =>
       typeof image === "string" ? image : null
     );
 
     setNewProduct({
       ...productToEdit,
-      category: productToEdit.category || "", // ✅ Ensure category is set correctly
+      category: productToEdit.category || "",
     });
   
     setNewProduct(productToEdit);
-    setImagePreviews(updatedImagePreviews); // ✅ Set image previews properly
+    setImagePreviews(updatedImagePreviews); 
     setIsAddingProduct(true);
     setIsEditingProduct(true);
   };
@@ -238,7 +238,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleDeleteProduct = async (productId) => {
     try {
-      console.log("Delete product with id:", productId); // Debug the productId
+      console.log("Delete product with id:", productId); 
 
       const response = await axios.delete(
         `https://api.atoutfashion.com/api/products/${productId}`
@@ -246,7 +246,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
       if (response.data.success) {
         alert("Product deleted successfully!");
-        // Filter out the deleted product from the local state
+       
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product._id !== productId)
         );
@@ -262,9 +262,9 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const fetchCategories = async () => {
     try {
       const response = await axios.get("https://api.atoutfashion.com/api/categories");
-      console.log("API Response Inside fetchCategories:", response.data); // Log API response
-      setCategories(response.data || []); // Set categories in state
-      console.log("Categories After setCategories:", response.data); // Log the new data
+      console.log("API Response Inside fetchCategories:", response.data); 
+      setCategories(response.data || []); 
+      console.log("Categories After setCategories:", response.data); 
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -280,13 +280,13 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
     );
     console.log("findCategory", findCategory);
 
-    // Generate SKU
+    
     const currentCount = skuCounts[selectedCategory] || 0;
     const newSku = `${selectedCategory.slice(0, 3).toUpperCase()}${String(
       currentCount + 1
     ).padStart(3, "0")}`;
 
-    // Update SKU counts
+    
     setSkuCounts({
       ...skuCounts,
       [selectedCategory]: currentCount + 1,
@@ -303,24 +303,21 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
     if (findCategory) {
       setNewProduct({
         ...newProduct,
-        category: findCategory.category, // ✅ Set category
+        category: findCategory.category, 
         sku: newSku,
-        categoryId: findCategory._id, // ✅ Set corresponding category ID
+        categoryId: findCategory._id, 
       });
     }
   };
 
 
 
-  const handleFilter = () => {
-    const filtered = products.filter((product) => product.price > 100);
-    setFilteredProducts(filtered);
-  };
+
 
   const handleRowClick = (product) => {
     setSelectedProduct(product);
   };
-  // console.log(selectedProduct , "setSelectedProduct")
+  
 
   const handleBackToTable = () => {
     setSelectedProduct(null);
@@ -761,6 +758,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                   display: "flex",
                   alignItems: "center",
                   marginTop: "-3%",
+                  position:'relative'
                 }}
               >
                 <div style={{ position: "relative" }}>
@@ -785,7 +783,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                 <div style={{ marginLeft: "auto" }}>
                   <button
                     onClick={() => setIsAddingProduct(true)}
-                    style={{ padding: "5px 10px", cursor: "pointer" }}
+                    style={{ padding: "5px 10px", cursor: "pointer",  }}
                   >
                     + Add Product
                   </button>
