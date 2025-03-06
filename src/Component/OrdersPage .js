@@ -130,7 +130,7 @@ const OrdersPage = () => {
         <>
           <h3 style={{ marginBottom: "20px" }}>Orders Management</h3>
           <>
-      <Table striped bordered hover>
+      <Table striped bordered hover style={{marginLeft:'-1%', width:'95%'}}>
         <thead>
           <tr style={{ textAlign: "center" }}>
             <th>Sl.no</th>

@@ -14,7 +14,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:8080/api/admin/login", { email, password });
+      const response = await axios.post("https://api.atoutfashion.com/api/admin/login", { email, password });
 
       // Save token and username in local storage
       localStorage.setItem("authToken", response.data.token);

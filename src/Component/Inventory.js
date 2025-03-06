@@ -87,7 +87,7 @@ function Inventory() {
 
             {showInventory && (
                <>
-               <table className="table table-bordered">
+               <table className="table table-bordered" style={{width:'94%'}}>
                  <thead style={{ textAlign: "center" }}>
                    <tr>
                      <th>Sl No</th>

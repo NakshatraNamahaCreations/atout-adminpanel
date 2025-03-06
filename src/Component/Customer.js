@@ -71,11 +71,12 @@ function Customer() {
     }
   };
   
-
   const filteredCustomers = customers.filter((customer) =>
     (customer.username && customer.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (customer.email && customer.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    (customer.email && customer.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (customer.mobilenumber && customer.mobilenumber.toString().includes(searchTerm)) 
   );
+  
   
 
   return (
@@ -146,13 +147,14 @@ function Customer() {
             <tbody>
               {filteredCustomers.map((customer, index) => (
                 <tr key={index} >
-                  <td onClick={() => handleRowClick(customer)}>{index + 1}</td>
-                  <td onClick={() => handleRowClick(customer)}>
+                  <td>{index + 1}</td>
+                  {/* <td onClick={() => handleRowClick(customer)}> */}
+                  <td >
                     {/* <img src={customer.pictureUrl} alt="Customer" style={{ width: '30px', height: '30px', borderRadius: '50%' }} /> */}
                     {customer.username}
                   </td>
-                  <td onClick={() => handleRowClick(customer)}>{customer.mobilenumber}</td>
-                  <td onClick={() => handleRowClick(customer)}>{customer.email}</td>
+                  <td >{customer.mobilenumber}</td>
+                  <td >{customer.email}</td>
                   <td>
                     <FaTrash
                       onClick={(e) => {

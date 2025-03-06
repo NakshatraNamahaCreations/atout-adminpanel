@@ -29,10 +29,19 @@ const Header = () => {
           style={{ cursor: "pointer" }}
           onClick={() => setShowDropdown(!showDropdown)}
         />
-        
+
         {/* Dropdown Menu */}
         {showDropdown && (
-          <div className="position-absolute end-0 mt-2 p-2 bg-white shadow rounded" style={{ width: "180px", textAlign: "center" }}>
+          <div
+            className="position-absolute bg-white shadow rounded"
+            style={{
+              top: "100%", // Ensures dropdown appears below the icon
+              right: "0",
+              width: "180px",
+              textAlign: "center",
+              zIndex: 1000, // Keeps dropdown above other content
+            }}
+          >
             <p className="m-0 fw-bold text-dark">Hi, {username || "Your Account"}</p>
             <hr className="my-2" />
             <button onClick={handleLogout} className="btn btn-sm btn-danger w-100">
