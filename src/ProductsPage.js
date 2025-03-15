@@ -34,6 +34,7 @@ const ProductsPage = ({ existingProductData }) => {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [isEditingProduct, setIsEditingProduct] = useState(false);
 
+  const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
@@ -65,7 +66,29 @@ const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
 
-
+const validateForm = () => {
+  let errors = {};
+  
+  if (!newProduct.name.trim()) errors.name = "Product name is required";
+  if (!newProduct.category) errors.category = "Category is required";
+  if (!newProduct.color.trim()) errors.color = "Color is required";
+  if (!newProduct.stock || newProduct.stock <= 0) errors.stock = "Stock must be a positive number";
+  if (!newProduct.length.trim()) errors.length = "Length is required";
+  if (!newProduct.width.trim()) errors.width = "Width is required";
+  if (!newProduct.price || newProduct.price <= 0) errors.price = "Price must be a positive number";
+  if (!newProduct.sku.trim()) errors.sku = "SKU is required";
+  if (!newProduct.material.trim()) errors.material = "Material is required";
+  if (!newProduct.description.trim()) errors.description = "Description is required";
+  if (!newProduct.details.trim()) errors.details = "Details are required";
+  
+  // Validate images
+  if (!imagePreviews.some((image) => image)) {
+    errors.images = "At least one product image is required";
+  }
+  
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
   const fetchProducts = async () => {
     try {
       const response = await axios.get("https://api.atoutfashion.com/api/products");
@@ -115,14 +138,40 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   };
   
   const handleAddProduct = async () => {
+   
+    let errors = {};
+    
+    if (!newProduct.name.trim()) errors.name = "Product name is required";
+    if (!newProduct.category) errors.category = "Category is required";
+    if (!newProduct.categoryId) errors.categoryId = "Category ID is required";
+    if (!newProduct.color.trim()) errors.color = "Color is required";
+    if (!newProduct.stock || newProduct.stock <= 0) errors.stock = "Stock must be a number";
+    if (!newProduct.length.trim()) errors.length = "Length is required";
+    if (!newProduct.width.trim()) errors.width = "Width is required";
+    if (!newProduct.price || newProduct.price <= 0) errors.price = "Price must be a number";
+    if (!newProduct.sku.trim()) errors.sku = "SKU is required";
+    if (!newProduct.material.trim()) errors.material = "Material is required";
+    if (!newProduct.description.trim()) errors.description = "Description is required";
+    if (!newProduct.details.trim()) errors.details = "Details are required";
+  
+
+    if (!newProduct.images || newProduct.images.length === 0) {
+      errors.images = "At least one product image is required";
+    }
+    
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+  
     if (!newProduct.sku) {
-      alert("Please enter a SKU or let the system generate one.");
+      setErrors((prevErrors) => ({ ...prevErrors, sku: "Please enter a SKU or let the system generate one." }));
       return;
     }
   
     const skuExists = await checkIfSKUExists(newProduct.sku);
     if (skuExists) {
-      alert(`A product with SKU '${newProduct.sku}' already exists. Please use a different SKU.`);
+      setErrors((prevErrors) => ({ ...prevErrors, sku: `A product with SKU '${newProduct.sku}' already exists. Please use a different SKU.` }));
       return;
     }
   
@@ -152,14 +201,30 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
       });
   
       console.log("Product added:", response.data);
-      
-     
+      setNewProduct({
+        name: "",
+        category: "",
+        categoryId: "",
+        price: "",
+        sku: "",
+        color: "",
+        material: "",
+        description: "",
+        length: "",
+        width: "",
+        details: "",
+        stock: "",
+        images: [],
+      });
+      setImagePreviews([null, null, null, null, null]);
+      setErrors({});
       window.location.reload();
-  
     } catch (error) {
       console.error("Error adding product:", error.response?.data || error);
     }
   };
+  
+  
   
   
 
@@ -456,6 +521,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                    {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
                 </div>
 
                 {/* Category */}
@@ -491,7 +557,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
     <option disabled>Loading categories...</option>
   )}
 </select>
-
+{errors.category && <p style={{ color: "red" }}>{errors.category}</p>}
                 </div>
 
                 <div style={{ flex: 1 }}>
@@ -517,6 +583,8 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                  
+                  {errors.color && <p style={{ color: "red" }}>{errors.color}</p>}
                 </div>
                 <div style={{ flex: 1 }}>
                   <label
@@ -541,6 +609,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                    {errors.stock && <p style={{ color: "red" }}>{errors.stock}</p>}
                 </div>
               </div>
               <div
@@ -569,6 +638,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                    {errors.length && <p style={{ color: "red" }}>{errors.length}</p>}
                 </div>
 
                 <div style={{ flex: 1, marginLeft: "-8%" }}>
@@ -594,6 +664,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                  {errors.width && <p style={{ color: "red" }}>{errors.width}</p>}
                 </div>
                 <div style={{ flex: 1, marginLeft: "-8%" }}>
                   <label
@@ -618,6 +689,7 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                   {errors.price && <p style={{ color: "red" }}>{errors.price}</p>}
                 </div>
                 <div style={{ flex: 1, marginLeft: "-8%" }}>
                   <label
@@ -643,6 +715,8 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                   {errors.sku && <p style={{ color: "red" }}>{errors.sku}</p>}
+
                 </div>
               </div>
               <div
@@ -671,6 +745,8 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                   {errors.material && <p style={{ color: "red" }}>{errors.material}</p>}
+                  
                 </div>
                 <div style={{ flex: 1 }}>
                   <label
@@ -698,6 +774,8 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                   {errors.description && <p style={{ color: "red" }}>{errors.description}</p>}
+
                 </div>
                 <div style={{ flex: 1 }}>
                   <label
@@ -723,6 +801,8 @@ const currentProducts = filteredData.slice(indexOfFirstItem, indexOfLastItem);
                       borderRadius: "4px",
                     }}
                   />
+                   {errors.details && <p style={{ color: "red" }}>{errors.details}</p>}
+
                 </div>
               </div>
               <div

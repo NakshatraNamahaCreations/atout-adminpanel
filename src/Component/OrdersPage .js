@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Card, Form, Row, Col, Pagination } from "react-bootstrap";
+import { Table, Button, Card, Form, Row, Col, Pagination, InputGroup } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 // Import Order model if needed
 // import Order from "../models/ordermodel"; // Uncomment and adjust path if Order is a model
 
@@ -9,17 +10,27 @@ const OrdersPage = () => {
   const [updatedProducts, setUpdatedProducts] = useState([]);
   const [isModified, setIsModified] = useState(false);
 
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   // Calculate total pages
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
+  // const totalPages = Math.ceil(orders.length / itemsPerPage);
 
   // Get current page data
+  // const indexOfLastItem = currentPage * itemsPerPage;
+  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
+  const filteredOrders = orders.filter(
+    (order) =>
+      order.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.phoneNumber.includes(searchQuery)
+  );
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
+  const currentOrders = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
 
     useEffect(() => {
       const fetchOrders = async () => {
@@ -128,15 +139,39 @@ const OrdersPage = () => {
     <div className="container" style={{ marginTop: "2%", width: "94%" }}>
       {!selectedOrder ? (
         <>
-          <h3 style={{ marginBottom: "20px" }}>Orders Management</h3>
+       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <h3 style={{ fontSize: "20px" }}>Orders Management</h3>
+        <div style={{ position: "relative", marginRight: "61px" }}>
+          <input
+            type="text"
+            placeholder="Search"
+            style={{ padding: '5px 10px 5px 30px', width: '200px' }}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <i
+            className="fa fa-search"
+            style={{
+              position: "absolute",
+              left: "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}
+          ></i>
+        </div>
+      </div>
+         
           <>
       <Table striped bordered hover style={{marginLeft:'-1%', width:'95%'}}>
         <thead>
           <tr style={{ textAlign: "center" }}>
             <th>Sl.no</th>
             <th>Customer Name</th>
+            <th>Mobile Number</th>
+
             <th>Amount</th>
             <th>Payment</th>
+
             <th>Date</th>
             <th>Actions</th>
           </tr>
@@ -146,6 +181,7 @@ const OrdersPage = () => {
             <tr key={order._id}>
               <td>{indexOfFirstItem + index + 1}</td>
               <td>{order.firstName}</td>
+              <td>{order.phoneNumber}</td>
               <td>{order.totalAmount}</td>
               <td>{order.paymentMethod}</td>
               <td>{order.formattedDate}</td>

@@ -170,7 +170,7 @@ const handleDeleteCategory = async (categoryId) => {
             }}
           ></i>
         </div>
-        <i className="fa fa-filter" style={{ marginRight: '10px' }}></i>
+        {/* <i className="fa fa-filter" style={{ marginRight: '10px' }}></i> */}
         <button variant="primary" onClick={handleCreateFormShow} style={{ marginLeft: 'auto' }}>
           Create New Category
         </button>
