@@ -38,7 +38,7 @@
 // export default App;
 
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from "./Sidebar";
@@ -54,7 +54,19 @@ import Voucher from "./Component/Voucher";
 import Login from "./Component/Login";
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem("authToken");
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("authToken"));
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(!!localStorage.getItem("authToken"));
+    };
+
+    // Event to refresh login state when token is set
+    window.addEventListener("authChanged", checkAuth);
+
+    return () => window.removeEventListener("authChanged", checkAuth);
+  }, []);
+
 
   return (
     <Router>

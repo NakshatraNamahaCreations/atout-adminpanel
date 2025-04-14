@@ -16,12 +16,20 @@ const Login = () => {
     try {
       const response = await axios.post("https://api.atoutfashion.com/api/admin/login", { email, password });
 
-      // Save token and username in local storage
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("username", response.data.username);
+      const { token, username } = response.data;
 
-      // Redirect to Dashboard
-      navigate("/dashboard");
+     
+      if (token) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("username", username);
+
+        // 🔥 This triggers App.js to re-check auth
+        window.dispatchEvent(new Event("authChanged"));
+
+        navigate("/dashboard");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials, please try again.");
     }
